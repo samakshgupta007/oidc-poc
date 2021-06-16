@@ -5,11 +5,11 @@ module.exports = {
         // client_secret: 'this_is_our_client_secret',
         client_id: 'test_oauth_app',
         client_secret: 'super_secret',
-        grant_types: ['client_credentials'],
+        grant_types: ['authorization_code'],
         application_type: 'web',
-        response_types: ['id_token code'],
-        redirect_uris: ['https://conscent.vercel.app'],
-        token_endpoint_auth_method: 'none',
+        response_types: ['code'],
+        redirect_uris: ['http://localhost:3001/api/v1/auth/callback'],
+        // token_endpoint_auth_method: 'none',
         // client_id: 'test_oauth_app',
         // client_secret: 'super_secret',
         // grant_types: ['client_credentials'],
@@ -40,6 +40,12 @@ module.exports = {
       revocation: { enabled: true }, // defaults to false
       // clientCredentials: { enabled: true },
       // introspection: { enabled: true },
+    },
+    pkce: {
+      methods: ['S256'],
+      required: (ctx, client) => {
+        return true;
+      },
     },
     jwks: {
       keys: [
