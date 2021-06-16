@@ -2,9 +2,11 @@
 
 const path = require('path');
 const url = require('url');
-
+require('dotenv').config();
 const express = require('express'); // eslint-disable-line import/no-unresolved
 const helmet = require('helmet');
+const mongoose = require("mongoose")
+const bodyParser = require("body-parser")
 
 const { Provider } = require('oidc-provider');
 
@@ -20,6 +22,17 @@ app.use(helmet());
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+mongoose.connection.on("error", err => {
+  console.log("err", err)
+})
+mongoose.connection.on("connected", (err, res) => {
+  console.log("mongoose is connected")
+})
 
 let server;
 (async () => {

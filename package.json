@@ -11,9 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "assert": "^2.0.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "lodash": "^4.17.21",
+    "mongoose": "^5.12.14",
     "oidc-provider": "^7.4.1",
     "path": "^0.12.7",
     "querystring": "^0.2.1",

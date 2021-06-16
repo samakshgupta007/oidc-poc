@@ -2,7 +2,9 @@
 const { strict: assert } = require('assert');
 const querystring = require('querystring');
 const { inspect } = require('util');
-
+const mongoose = require('mongoose');
+const UserAccountSchema = require('../models/userAccount.schema');
+const UserAccount = mongoose.model('UserAccount', UserAccountSchema);
 const isEmpty = require('lodash/isEmpty');
 const { urlencoded } = require('express'); // eslint-disable-line import/no-unresolved
 
@@ -94,6 +96,12 @@ module.exports = (app, provider) => {
       const { prompt: { name } } = await provider.interactionDetails(req, res);
       assert.equal(name, 'login');
       const account = await Account.findByLogin(req.body.login);
+
+      // querying the db for user info 
+      const user = UserAccount.findOne({phoneNumber: '9910239769'}, function (err, response) {
+        if (err) return handleError(err);
+        console.log('got it now', response);
+      });
 
       const result = {
         login: {
