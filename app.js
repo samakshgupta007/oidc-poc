@@ -55,6 +55,8 @@ let server;
     });
   }
 
+  console.log('Callback', provider);
+
   routes(app, provider);
   app.use(provider.callback());
   server = app.listen(PORT, () => {
