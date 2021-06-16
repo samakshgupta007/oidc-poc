@@ -3,16 +3,18 @@ module.exports = {
       {
         // client_id: 'test_implicit_app',
         // client_secret: 'this_is_our_client_secret',
-        // grant_types: ['implicit'],
-        // application_type: 'web',
-        // response_types: ['id_token'],
-        // redirect_uris: ['https://testapp/signin-oidc'],
-        // token_endpoint_auth_method: 'none',
         client_id: 'test_oauth_app',
         client_secret: 'super_secret',
         grant_types: ['client_credentials'],
-        redirect_uris: [],
-        response_types: [],
+        application_type: 'web',
+        response_types: ['id_token code'],
+        redirect_uris: ['https://conscent.vercel.app'],
+        token_endpoint_auth_method: 'none',
+        // client_id: 'test_oauth_app',
+        // client_secret: 'super_secret',
+        // grant_types: ['client_credentials'],
+        // redirect_uris: [],
+        // response_types: [],
       },
     ],
     scopes: ['api1'],
@@ -36,8 +38,8 @@ module.exports = {
       devInteractions: { enabled: false }, // defaults to true
       deviceFlow: { enabled: true }, // defaults to false
       revocation: { enabled: true }, // defaults to false
-      clientCredentials: { enabled: true },
-      introspection: { enabled: true },
+      // clientCredentials: { enabled: true },
+      // introspection: { enabled: true },
     },
     jwks: {
       keys: [
