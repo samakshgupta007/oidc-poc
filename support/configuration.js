@@ -37,8 +37,8 @@ module.exports = {
       devInteractions: { enabled: false }, // defaults to true
       deviceFlow: { enabled: true }, // defaults to false
       revocation: { enabled: true }, // defaults to false
-      // clientCredentials: { enabled: true },
-      // introspection: { enabled: true },
+      clientCredentials: { enabled: true },
+      introspection: { enabled: true },
     },
     pkce: {
       methods: ['S256'],
