@@ -17,7 +17,6 @@ module.exports = {
         // response_types: [],
       },
     ],
-    scopes: ['api1'],
     interactions: {
       url(ctx, interaction) { // eslint-disable-line no-unused-vars
         return `/interaction/${interaction.uid}`;

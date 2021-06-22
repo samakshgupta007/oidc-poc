@@ -100,7 +100,7 @@ module.exports = (app, provider) => {
       // querying the db for user info 
       const user = UserAccount.findOne({phoneNumber: '9910239769'}, function (err, response) {
         if (err) return handleError(err);
-        console.log('got it now', response);
+        //console.log('got it now', response);
       });
 
       const result = {
@@ -117,9 +117,13 @@ module.exports = (app, provider) => {
 
   app.post('/interaction/:uid/confirm', setNoCache, body, async (req, res, next) => {
     try {
+      
       const interactionDetails = await provider.interactionDetails(req, res);
       const { prompt: { name, details }, params, session: { accountId } } = interactionDetails;
       assert.equal(name, 'consent');
+
+       const x = interactionDetails;
+      console.log('x', x);
 
       let { grantId } = interactionDetails;
       let grant;
