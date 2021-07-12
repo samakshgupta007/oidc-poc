@@ -2,9 +2,7 @@
 const { strict: assert } = require('assert');
 const querystring = require('querystring');
 const { inspect } = require('util');
-const mongoose = require('mongoose');
-const UserAccountSchema = require('../models/userAccount.schema');
-const UserAccount = mongoose.model('UserAccount', UserAccountSchema);
+const { UserAccount, Otp } = require('../models/index');
 const isEmpty = require('lodash/isEmpty');
 const { urlencoded } = require('express'); // eslint-disable-line import/no-unresolved
 

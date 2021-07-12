@@ -54,3 +54,7 @@ const UserAccountSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+const UserAccount = mongoose.model('UserAccount', UserAccountSchema);
+
+module.exports = UserAccount; 
