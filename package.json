@@ -4,13 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "assert": "^2.0.0",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
@@ -21,5 +23,8 @@
     "path": "^0.12.7",
     "querystring": "^0.2.1",
     "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^2.0.0"
   }
 }

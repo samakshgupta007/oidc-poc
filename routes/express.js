@@ -2,15 +2,11 @@
 const { strict: assert } = require('assert');
 const querystring = require('querystring');
 const { inspect } = require('util');
-const mongoose = require('mongoose');
-const UserAccountSchema = require('../models/userAccount.schema');
-const UserAccount = mongoose.model('UserAccount', UserAccountSchema);
+const { UserAccount, Otp } = require('../models');
 const isEmpty = require('lodash/isEmpty');
 const { urlencoded } = require('express'); // eslint-disable-line import/no-unresolved
-
-const Account = require('../support/account');
-
 const body = urlencoded({ extended: false });
+const sendOtp = require('./controller');
 
 const keys = new Set();
 const debug = (obj) => querystring.stringify(Object.entries(obj).reduce((acc, [key, value]) => {
@@ -93,19 +89,18 @@ module.exports = (app, provider) => {
 
   app.post('/interaction/:uid/login', setNoCache, body, async (req, res, next) => {
     try {
-      const { prompt: { name } } = await provider.interactionDetails(req, res);
+      const { prompt: { name },  } = await provider.interactionDetails(req, res);
       assert.equal(name, 'login');
-      const account = await Account.findByLogin(req.body.login);
 
+      const userIdentifier = req.body['login'];
       // querying the db for user info 
-      const user = UserAccount.findOne({phoneNumber: '9910239769'}, function (err, response) {
-        if (err) return handleError(err);
-        //console.log('got it now', response);
-      });
+      const user = await UserAccount.findOne({ phoneNumber: userIdentifier });
+
+      await sendOtp({userAccount: user});
 
       const result = {
         login: {
-          accountId: account.accountId,
+          accountId: user._id,
         },
       };
 
