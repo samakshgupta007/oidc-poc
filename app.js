@@ -9,13 +9,13 @@ const mongoose = require("mongoose")
 const bodyParser = require("body-parser")
 
 const { Provider } = require('oidc-provider');
-
-const Account = require('./support/account');
 const configuration = require('./support/configuration');
 const routes = require('./routes/express');
 
+const { UserAccount } = require('./models/index');
+configuration.findAccount = UserAccount.findAccount;
+
 const { PORT = 3005, ISSUER = `http://localhost:${PORT}` } = process.env;
-configuration.findAccount = Account.findAccount;
 
 const app = express();
 app.use(helmet());

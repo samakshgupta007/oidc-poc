@@ -6,8 +6,6 @@ const { UserAccount, Otp } = require('../models/index');
 const isEmpty = require('lodash/isEmpty');
 const { urlencoded } = require('express'); // eslint-disable-line import/no-unresolved
 
-const Account = require('../support/account');
-
 const body = urlencoded({ extended: false });
 
 const keys = new Set();
@@ -93,17 +91,12 @@ module.exports = (app, provider) => {
     try {
       const { prompt: { name } } = await provider.interactionDetails(req, res);
       assert.equal(name, 'login');
-      const account = await Account.findByLogin(req.body.login);
 
       // querying the db for user info 
-      const user = UserAccount.findOne({phoneNumber: '9910239769'}, function (err, response) {
-        if (err) return handleError(err);
-        //console.log('got it now', response);
-      });
-
+      const user = await UserAccount.findOne({phoneNumber: '9910239769'});
       const result = {
         login: {
-          accountId: account.accountId,
+          accountId: user.phoneNumber,
         },
       };
 
@@ -120,7 +113,7 @@ module.exports = (app, provider) => {
       const { prompt: { name, details }, params, session: { accountId } } = interactionDetails;
       assert.equal(name, 'consent');
 
-       const x = interactionDetails;
+      const x = interactionDetails;
       console.log('x', x);
 
       let { grantId } = interactionDetails;
