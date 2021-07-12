@@ -17,7 +17,7 @@ async function deliverOtp(
     );
   };
 
-module.exports = async function sendOtp({userAccount}) {
+async function sendOtp({userAccount}) {
     //TODO: Need to add check for rate limiting OTPs
     // const previousOtps = await this.otpModel.count({
     //   ipAddress,
@@ -58,3 +58,62 @@ module.exports = async function sendOtp({userAccount}) {
       message: 'otp sent',
     };
 }
+
+async function validateOtp({userAccount, OTP}) {
+  // const { phoneNumber, email, OTP, sessionId, clientId } = authOTPCredentialsDto;
+    // let userAccount;
+    // if (phoneNumber) {
+    //   userAccount = await this.userAccountModel.findOne({ phoneNumber });
+    // } else if (email) {
+    //   userAccount = await this.userAccountModel.findOne({ email: email.toLowerCase() });
+    // }
+    // if (!userAccount) {
+    //   throw new ConflictException('Account does not exist. Please sign up');
+    // }
+
+    const today = new Date();
+    const otp = await Otp.findOne({ userAccount: userAccount.id, status: 'UNVERIFIED', otpExpiry: { $gte: today } }).sort({ createdAt: -1 });
+
+    if (!otp) {
+      throw new Error('Invalid OTP');
+    }
+    if (today.getTime() >= otp.otpExpiry.getTime()) {
+      throw new Error(`OTP Expired`);
+    }
+
+    if (OTP !== otp.code) {
+      otp.retries = otp.retries + 1;
+      await otp.save();
+      if (otp.retries > 10) {
+        throw new Error('Too many retries. Please request a new OTP');
+      }
+      // allow '1234' to pass as OTP in development
+      if (process.env['sendOtps'] || OTP !== '1234') throw new Error('Invalid OTP');
+    }
+
+    // if (userAccount.status === 'PENDING') {
+    //   userAccount.status = 'ACTIVE';
+    // }
+    // if (clientId) {
+    //   userAccount.loggedInClients.push(clientId);
+    // }
+    // await userAccount.save();
+
+    otp.status = 'VERIFIED';
+    await otp.save();
+
+    console.log('got here now - validate otp complete as such');
+
+    // const session = await this.getSession(sessionId, userAccount._id, reqData['user-agent']);
+    // return {
+    //   ...(await this.generateToken({
+    //     userId: userAccount._id,
+    //     phoneNumber: userAccount.phoneNumber,
+    //     email: userAccount.email,
+    //     sessionId: session._id,
+    //   })),
+    //   message: 'User Validated',
+    // };
+}
+
+module.exports = { sendOtp, validateOtp };

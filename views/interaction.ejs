@@ -49,5 +49,6 @@
   <% } %>
   </ul>
   <form autocomplete="off" action="/interaction/<%= uid %>/confirm" method="post">
-    <button autofocus type="submit" class="login login-submit">Continue</button>
+    <input required type="text" name="otp" placeholder="Enter OTP" <% if (!params.login_hint) { %>autofocus="on"<% } else { %> value="<%= params.login_hint %>" <% } %>>
+    <button autofocus type="submit" class="login login-submit">Submit</button>
   </form>

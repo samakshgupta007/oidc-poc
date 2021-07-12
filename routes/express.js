@@ -5,7 +5,7 @@ const { inspect } = require('util');
 const { UserAccount, Otp } = require('../models/index');
 const isEmpty = require('lodash/isEmpty');
 const { urlencoded } = require('express'); // eslint-disable-line import/no-unresolved
-
+const { sendOtp, validateOtp } = require('./controller');
 const body = urlencoded({ extended: false });
 
 const keys = new Set();
@@ -94,6 +94,7 @@ module.exports = (app, provider) => {
 
       // querying the db for user info 
       const user = await UserAccount.findOne({phoneNumber: '9910239769'});
+      await sendOtp({userAccount: user});
       const result = {
         login: {
           accountId: user.phoneNumber,
@@ -112,9 +113,11 @@ module.exports = (app, provider) => {
       const interactionDetails = await provider.interactionDetails(req, res);
       const { prompt: { name, details }, params, session: { accountId } } = interactionDetails;
       assert.equal(name, 'consent');
+      const OTP = req.body['otp'];
+      const user = await UserAccount.findOne({phoneNumber: '9910239769'});
+      await validateOtp({userAccount: user, OTP});
 
-      const x = interactionDetails;
-      console.log('x', x);
+      console.log('got it first', interactionDetails);
 
       let { grantId } = interactionDetails;
       let grant;
@@ -153,6 +156,8 @@ module.exports = (app, provider) => {
 
       const result = { consent };
       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: true });
+      const interactionDetails2 = await provider.interactionDetails(req, res);
+      console.log('got here now interaction details 2', interactionDetails2);
     } catch (err) {
       next(err);
     }
