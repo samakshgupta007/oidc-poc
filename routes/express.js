@@ -94,11 +94,11 @@ module.exports = (app, provider) => {
 
       // querying the db for user info 
       let user = await UserAccount.findOne({ $or:[ {phoneNumber: req.body['phoneNumber']}, {email: req.body['phoneNumber']}]});
-      console.log('got it', user);
+      const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       if(!user){
-        user = await createUserAccount({userAgent: req.headers['user-agent'], ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress, phoneNumber: req.body['phoneNumber'], })
+        user = await createUserAccount({userAgent: req.headers['user-agent'], ipAddress: ipAddress, phoneNumber: req.body['phoneNumber'], })
       }
-      await sendOtp({userAccount: user});
+      await sendOtp({userAccount: user, ipAddress: ipAddress});
       const result = {
         login: {
           accountId: user.phoneNumber,
@@ -118,7 +118,7 @@ module.exports = (app, provider) => {
       const { prompt: { name, details }, params, session: { accountId } } = interactionDetails;
       assert.equal(name, 'consent');
       const OTP = req.body['otp'];
-      const user = await UserAccount.findOne({phoneNumber: '9910239769'});
+      const user = await UserAccount.findOne({ $or:[ {phoneNumber: accountId}, {email: accountId}]});
       await validateOtp({userAccount: user, OTP});
 
       let { grantId } = interactionDetails;

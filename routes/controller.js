@@ -18,19 +18,18 @@ async function deliverOtp(
     );
   };
 
-async function sendOtp({userAccount}) {
-    //TODO: Need to add check for rate limiting OTPs
-    // const previousOtps = await this.otpModel.count({
-    //   ipAddress,
-    //   createdAt: {
-    //     $gte: moment()
-    //       .subtract(10, 'minutes')
-    //       .toDate(),
-    //   },
-    // });
+async function sendOtp({userAccount, ipAddress}) {
+    const previousOtps = await this.otpModel.count({
+      ipAddress,
+      createdAt: {
+        $gte: moment()
+          .subtract(10, 'minutes')
+          .toDate(),
+      },
+    });
 
     if (process.env['sendOtps'] && previousOtps >= 10) {
-      throw new ConflictException('Too many OTP requests. Please try again in 10 minutes');
+      throw new Error('Too many OTP requests. Please try again in 10 minutes');
     }
 
     const code = Math.floor(1000 + Math.random() * 9000);
@@ -51,9 +50,7 @@ async function sendOtp({userAccount}) {
 
     await deliverOtp(userAccount.phoneNumber, code, messageObj);
 
-    const newOtp = new Otp({ userAccount: userAccount.id, code, otpExpiry, 
-       // ipAddress 
-    });
+    const newOtp = new Otp({ userAccount: userAccount.id, code, otpExpiry, ipAddress });
     await newOtp.save();
     return {
       message: 'otp sent',
