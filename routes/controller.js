@@ -1,5 +1,6 @@
 const { UserAccount, Otp } = require('../models/index');
 const axios = require('axios').default;
+const UAParser = require('ua-parser-js');
 
 async function deliverOtp(
     phoneNumber,
@@ -101,17 +102,33 @@ async function validateOtp({userAccount, OTP}) {
 
     otp.status = 'VERIFIED';
     await otp.save();
-
-    // const session = await this.getSession(sessionId, userAccount._id, reqData['user-agent']);
-    // return {
-    //   ...(await this.generateToken({
-    //     userId: userAccount._id,
-    //     phoneNumber: userAccount.phoneNumber,
-    //     email: userAccount.email,
-    //     sessionId: session._id,
-    //   })),
-    //   message: 'User Validated',
-    // };
+    return; 
 }
 
-module.exports = { sendOtp, validateOtp };
+async function createUserAccount({
+  userAgent,
+  phoneNumber,
+  email,
+  ipAddress,
+}) {
+  const parser = new UAParser();
+  parser.setUA(userAgent);
+  const userAgentDetails = parser.getResult();
+  //const { countryCode } = await this.detectCountry(ipAddress);
+  const userAccount = new UserAccount({
+    email: email ? email.toLowerCase() : undefined,
+    phoneNumber: phoneNumber ? phoneNumber : undefined,
+    status: 'PENDING',
+    //country: countryCode,
+    onBoardingDetails: {
+      userAgent: userAgent,
+      operatingSystem: userAgentDetails.os.name,
+      browser: userAgentDetails.browser.name,
+      ipAddress: ipAddress,
+    },
+  });
+  await userAccount.save();
+  return userAccount;
+}
+
+module.exports = { sendOtp, validateOtp, createUserAccount };

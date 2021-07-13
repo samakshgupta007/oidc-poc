@@ -5,7 +5,7 @@ const { inspect } = require('util');
 const { UserAccount, Otp } = require('../models/index');
 const isEmpty = require('lodash/isEmpty');
 const { urlencoded } = require('express'); // eslint-disable-line import/no-unresolved
-const { sendOtp, validateOtp } = require('./controller');
+const { sendOtp, validateOtp, createUserAccount } = require('./controller');
 const body = urlencoded({ extended: false });
 
 const keys = new Set();
@@ -93,7 +93,11 @@ module.exports = (app, provider) => {
       assert.equal(name, 'login');
 
       // querying the db for user info 
-      const user = await UserAccount.findOne({phoneNumber: '9910239769'});
+      let user = await UserAccount.findOne({ $or:[ {phoneNumber: req.body['phoneNumber']}, {email: req.body['phoneNumber']}]});
+      console.log('got it', user);
+      if(!user){
+        user = await createUserAccount({userAgent: req.headers['user-agent'], ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress, phoneNumber: req.body['phoneNumber'], })
+      }
       await sendOtp({userAccount: user});
       const result = {
         login: {

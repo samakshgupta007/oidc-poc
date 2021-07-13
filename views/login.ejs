@@ -13,7 +13,7 @@
     </div>
     <% } %>
     <form autocomplete="off" action="/interaction/<%= uid %>/login" method="post">
-      <input required type="text" name="login" placeholder="Enter your Mobile Number" <% if (!params.login_hint) { %>autofocus="on"<% } else { %> value="<%= params.login_hint %>" <% } %>>
+      <input required type="text" name="phoneNumber" placeholder="Enter your Mobile Number" <% if (!params.login_hint) { %>autofocus="on"<% } else { %> value="<%= params.login_hint %>" <% } %>>
     
       <button type="submit" class="login login-submit">Sign-in</button>
     </form>

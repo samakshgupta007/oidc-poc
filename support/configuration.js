@@ -29,6 +29,7 @@ module.exports = {
       revocation: { enabled: true }, // defaults to false
       clientCredentials: { enabled: true },
       introspection: { enabled: true },
+      encryption: { enabled: true }
     },
     pkce: {
       methods: ['S256'],
