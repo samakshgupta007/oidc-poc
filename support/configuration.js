@@ -1,20 +1,12 @@
 module.exports = {
     clients: [
       {
-        // client_id: 'test_implicit_app',
-        // client_secret: 'this_is_our_client_secret',
         client_id: 'test_oauth_app',
         client_secret: 'super_secret',
         grant_types: ['authorization_code'],
         application_type: 'web',
         response_types: ['code'],
         redirect_uris: ['http://localhost:3001/api/v1/auth/callback'],
-        // token_endpoint_auth_method: 'none',
-        // client_id: 'test_oauth_app',
-        // client_secret: 'super_secret',
-        // grant_types: ['client_credentials'],
-        // redirect_uris: [],
-        // response_types: [],
       },
     ],
     interactions: {
