@@ -117,8 +117,6 @@ module.exports = (app, provider) => {
       const user = await UserAccount.findOne({phoneNumber: '9910239769'});
       await validateOtp({userAccount: user, OTP});
 
-      console.log('got it first', interactionDetails);
-
       let { grantId } = interactionDetails;
       let grant;
 
@@ -156,8 +154,6 @@ module.exports = (app, provider) => {
 
       const result = { consent };
       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: true });
-      const interactionDetails2 = await provider.interactionDetails(req, res);
-      console.log('got here now interaction details 2', interactionDetails2);
     } catch (err) {
       next(err);
     }

@@ -58,7 +58,10 @@ const UserAccountSchema = new mongoose.Schema(
 const UserAccount = mongoose.model('UserAccount', UserAccountSchema);
 
 UserAccount.findAccount = (ctx, id, token) => {
-  return UserAccount.findOne({phoneNumber: id});
+  return {
+    accountId: id,
+    async claims(use, scope) { return { sub: id }; },
+  };
 }
 
 module.exports = UserAccount; 
