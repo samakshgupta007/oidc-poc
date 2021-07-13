@@ -102,8 +102,6 @@ async function validateOtp({userAccount, OTP}) {
     otp.status = 'VERIFIED';
     await otp.save();
 
-    console.log('got here now - validate otp complete as such');
-
     // const session = await this.getSession(sessionId, userAccount._id, reqData['user-agent']);
     // return {
     //   ...(await this.generateToken({

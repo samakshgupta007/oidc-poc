@@ -60,7 +60,9 @@ const UserAccount = mongoose.model('UserAccount', UserAccountSchema);
 UserAccount.findAccount = (ctx, id, token) => {
   return {
     accountId: id,
-    async claims(use, scope) { return { sub: id }; },
+    async claims(use, scope) { 
+      return { sub: id }; 
+      },
   };
 }
 

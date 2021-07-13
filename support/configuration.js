@@ -59,5 +59,12 @@ module.exports = {
         },
       ],
     },
+    ttl: {
+      AccessToken: 24*60*60,//3600,
+      Interaction: 24*60*60,//3600,
+      IdToken: 24*60*60,//3600,
+      Session: 5*24*60*60, //7200,
+      Grant: 24*60*60,//3600,
+    },
   };
   
