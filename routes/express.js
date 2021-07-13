@@ -92,16 +92,11 @@ module.exports = (app, provider) => {
       const { prompt: { name } } = await provider.interactionDetails(req, res);
       assert.equal(name, 'login');
 
-      // querying the db for user info 
-      let user = await UserAccount.findOne({ $or:[ {phoneNumber: req.body['phoneNumber']}, {email: req.body['phoneNumber']}]});
       const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-      if(!user){
-        user = await createUserAccount({userAgent: req.headers['user-agent'], ipAddress: ipAddress, phoneNumber: req.body['phoneNumber'], })
-      }
-      await sendOtp({userAccount: user, ipAddress: ipAddress});
+      await sendOtp({user: req.body['phoneNumber'], ipAddress: ipAddress});
       const result = {
         login: {
-          accountId: user.phoneNumber,
+          accountId: req.body['phoneNumber'],
         },
       };
 
@@ -118,8 +113,7 @@ module.exports = (app, provider) => {
       const { prompt: { name, details }, params, session: { accountId } } = interactionDetails;
       assert.equal(name, 'consent');
       const OTP = req.body['otp'];
-      const user = await UserAccount.findOne({ $or:[ {phoneNumber: accountId}, {email: accountId}]});
-      await validateOtp({userAccount: user, OTP});
+      await validateOtp({user: accountId, OTP});
 
       let { grantId } = interactionDetails;
       let grant;

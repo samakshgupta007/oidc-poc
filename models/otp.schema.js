@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const OtpSchema = new mongoose.Schema(
   {
-    userAccount: String,
+    user: String,
     code: String,
     otpExpiry: Date,
     status: {

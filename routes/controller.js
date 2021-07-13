@@ -18,8 +18,8 @@ async function deliverOtp(
     );
   };
 
-async function sendOtp({userAccount, ipAddress}) {
-    const previousOtps = await this.otpModel.count({
+async function sendOtp({user, ipAddress}) {
+    const previousOtps = await Otp.count({
       ipAddress,
       createdAt: {
         $gte: moment()
@@ -39,7 +39,7 @@ async function sendOtp({userAccount, ipAddress}) {
     const messageObj = {
       message: `${code} is the OTP for your authentication on ConsCent, and is valid for 10 mins. Do not share your OTP, protect yourself from abuse.`,
       sender: 'CONCNT',
-      phoneNumber: userAccount.phoneNumber,
+      phoneNumber: user,
       otp: code.toString(),
     };
 
@@ -48,29 +48,19 @@ async function sendOtp({userAccount, ipAddress}) {
     //   messageObj.message = `${code} is the OTP for your authentication on ConsCent (flagship brand of TSB Media Venture Pvt Ltd) for ${client.name}, and is valid for 10 mins. Do not share your OTP, protect yourself from abuse.`;
     // }
 
-    await deliverOtp(userAccount.phoneNumber, code, messageObj);
+    await deliverOtp(user, code, messageObj);
 
-    const newOtp = new Otp({ userAccount: userAccount.id, code, otpExpiry, ipAddress });
+    const newOtp = new Otp({ user, code, otpExpiry, ipAddress });
     await newOtp.save();
     return {
       message: 'otp sent',
     };
 }
 
-async function validateOtp({userAccount, OTP}) {
-  // const { phoneNumber, email, OTP, sessionId, clientId } = authOTPCredentialsDto;
-    // let userAccount;
-    // if (phoneNumber) {
-    //   userAccount = await this.userAccountModel.findOne({ phoneNumber });
-    // } else if (email) {
-    //   userAccount = await this.userAccountModel.findOne({ email: email.toLowerCase() });
-    // }
-    // if (!userAccount) {
-    //   throw new ConflictException('Account does not exist. Please sign up');
-    // }
+async function validateOtp({user, OTP}) {
 
     const today = new Date();
-    const otp = await Otp.findOne({ userAccount: userAccount.id, status: 'UNVERIFIED', otpExpiry: { $gte: today } }).sort({ createdAt: -1 });
+    const otp = await Otp.findOne({ user, status: 'UNVERIFIED', otpExpiry: { $gte: today } }).sort({ createdAt: -1 });
 
     if (!otp) {
       throw new Error('Invalid OTP');
@@ -89,43 +79,9 @@ async function validateOtp({userAccount, OTP}) {
       if (process.env['sendOtps'] || OTP !== '1234') throw new Error('Invalid OTP');
     }
 
-    // if (userAccount.status === 'PENDING') {
-    //   userAccount.status = 'ACTIVE';
-    // }
-    // if (clientId) {
-    //   userAccount.loggedInClients.push(clientId);
-    // }
-    // await userAccount.save();
-
     otp.status = 'VERIFIED';
     await otp.save();
     return; 
 }
 
-async function createUserAccount({
-  userAgent,
-  phoneNumber,
-  email,
-  ipAddress,
-}) {
-  const parser = new UAParser();
-  parser.setUA(userAgent);
-  const userAgentDetails = parser.getResult();
-  //const { countryCode } = await this.detectCountry(ipAddress);
-  const userAccount = new UserAccount({
-    email: email ? email.toLowerCase() : undefined,
-    phoneNumber: phoneNumber ? phoneNumber : undefined,
-    status: 'PENDING',
-    //country: countryCode,
-    onBoardingDetails: {
-      userAgent: userAgent,
-      operatingSystem: userAgentDetails.os.name,
-      browser: userAgentDetails.browser.name,
-      ipAddress: ipAddress,
-    },
-  });
-  await userAccount.save();
-  return userAccount;
-}
-
-module.exports = { sendOtp, validateOtp, createUserAccount };
+module.exports = { sendOtp, validateOtp };
