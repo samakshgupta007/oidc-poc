@@ -7,6 +7,7 @@ module.exports = {
         application_type: 'web',
         response_types: ['code'],
         redirect_uris: ['http://localhost:3001/api/v1/auth/callback'],
+        post_logout_redirect_uris: ['http://localhost:3000']
       },
     ],
     interactions: {
@@ -29,7 +30,7 @@ module.exports = {
       revocation: { enabled: true }, // defaults to false
       clientCredentials: { enabled: true },
       introspection: { enabled: true },
-      encryption: { enabled: true }
+      encryption: { enabled: true },
     },
     pkce: {
       methods: ['S256'],

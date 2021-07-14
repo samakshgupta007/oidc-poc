@@ -6,20 +6,26 @@ require('dotenv').config();
 const express = require('express'); // eslint-disable-line import/no-unresolved
 const helmet = require('helmet');
 const mongoose = require("mongoose")
-const bodyParser = require("body-parser")
-
+const cors = require('cors')
 const { Provider } = require('oidc-provider');
 const configuration = require('./support/configuration');
 const routes = require('./routes/express');
 
 const { UserAccount } = require('./models/index');
-configuration.findAccount = UserAccount.findAccount;
+configuration.findAccount = (ctx, id, token) => {
+  return {
+    accountId: id,
+    async claims(use, scope) { 
+      return { sub: id }; 
+      },
+  };
+}
 
 const { PORT = 3005, ISSUER = `http://localhost:${PORT}` } = process.env;
 
 const app = express();
 app.use(helmet());
-
+app.use(cors({credentials: true, origin: true}))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
